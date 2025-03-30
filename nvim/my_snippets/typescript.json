@@ -1,0 +1,177 @@
+{
+  "Print to console": {
+    "prefix": "clg",
+    "body": [
+      "console.log($1)"
+    ]
+  },
+  "Print to console with divide": {
+    "prefix": "clgd",
+    "body": [
+      "console.log(\"====================\")",
+      "console.log(\"$1\", $2)",
+      "console.log(\"====================\")"
+    ]
+  },
+  "try-catch-finally": {
+    "prefix": "tcf",
+    "body": [
+      "try {",
+      "  $1",
+      "} catch (err) {",
+      "  console.log(err)",
+      "} finally {",
+      "  ",
+      "}"
+    ]
+  },
+  "promise and callbacks": {
+    "prefix": "ptcf",
+    "body": [
+      "${1:promise}.then((resp) => {",
+      "  ",
+      "}).catch((err) => {",
+      "  console.log(err)",
+      "}).finally(() => {",
+      "  ",
+      "})"
+    ]
+  },
+  "axios request": {
+    "prefix": "axs",
+    "body": [
+      "axios.${1|get,post,put|}(`$2`, {})"
+    ]
+  },
+  "axios request await": {
+    "prefix": "axsa",
+    "body": [
+      "await axios.${1|get,post,put|}(`$2`, {})"
+    ]
+  },
+  "sleep": {
+    "prefix": "sleep",
+    "body": [
+      "const sleep = (waitTime: number) => {",
+      "  return new Promise((resolve) => setTimeout(resolve, waitTime))",
+      "}",
+      "$1"
+    ]
+  },
+  "array map =>": {
+    "prefix": "mp",
+    "body": [
+      "${1:array}.map((${2:item}) => {",
+      "  $3",
+      "})",
+      "$4"
+    ]
+  },
+  "array foreach =>": {
+    "prefix": "fe",
+    "body": [
+      "${1:array}.forEach((${2:item}) => {",
+      "  $3",
+      "})",
+      "$4"
+    ]
+  },
+  "number array =>": {
+    "prefix": "numarr",
+    "body": [
+      "Array.from(Array(${1:10}).keys())$2"
+    ]
+  },
+  "create element tag": {
+    "prefix": "tag",
+    "body": [
+      "<${1:div}$2>$3</$1>"
+    ]
+  },
+  "create element tag with className": {
+    "prefix": "tagcl",
+    "body": [
+      "<${1:div} className=\"$2\">$3</$1>"
+    ]
+  },
+  "create element tag with close": {
+    "prefix": "tagmono",
+    "body": [
+      "<${1:div} $2 />"
+    ]
+  },
+  "create element tag with className and close": {
+    "prefix": "tagmonocl",
+    "body": [
+      "<${1:div} className=\"$2\">"
+    ]
+  },
+  "react functional component": {
+    "prefix": "rfc",
+    "body": [
+      "const $1 = () => {",
+      "  return <${2:div}$3>$4</$2>",
+      "}",
+      "$5"
+    ]
+  },
+  "react export functional component": {
+    "prefix": "refc",
+    "body": [
+      "export const $1 = () => {",
+      "  return <${2:div}$3>$4</$2>",
+      "}",
+      "$5"
+    ]
+  },
+  "useState snippet": {
+    "prefix": "ust",
+    "body": [
+      "const [$1, set${1/(.*)/${1:/capitalize}/}] = useState($2)",
+      "$3"
+    ]
+  },
+  "useRef snippet": {
+    "prefix": "urf",
+    "body": [
+      "const ${1:ref} = useRef<${2:HTMLDivElement}>(null);",
+      "$3"
+    ]
+  },
+  "useEffect snippet": {
+    "prefix": "uef",
+    "body": [
+      "useEffect(() => {",
+      "  $2",
+      "}, []",
+      "$3"
+    ]
+  },
+  "useCallback snippet": {
+    "prefix": "ucb",
+    "body": [
+      "const $1 = useCallback(() => {",
+      "  $2",
+      "}, [])",
+      "$3"
+    ]
+  },
+  "useCallback async snippet": {
+    "prefix": "ucba",
+    "body": [
+      "const $1 = useCallback(async () => {",
+      "  $2",
+      "}, [])",
+      "$3"
+    ]
+  },
+  "useMemo snippet": {
+    "prefix": "umm",
+    "body": [
+      "const $1 = useMemo(() => {",
+      "  $2",
+      "}, [])",
+      "$3"
+    ]
+  }
+}

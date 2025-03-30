@@ -1,0 +1,14 @@
+{
+  "script main": {
+    "prefix": "scptmain",
+    "body": [
+      "def main() -> None:",
+      "    ${1:...}",
+      "",
+      "",
+      "if __name__ == '__main__':",
+      "    main()"
+    ],
+    "description": "script main function"
+  }
+}
