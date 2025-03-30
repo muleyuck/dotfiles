@@ -10,10 +10,14 @@ if wezterm.config_builder then
 	config = wezterm.config_builder()
 end
 
+-- update check (1 day)
+config.check_for_updates = true
+config.check_for_updates_interval_seconds = 86400
+
 -- カラースキーム
 config.color_scheme = "nordfox"
-config.window_background_opacity = 0.90
-config.macos_window_background_blur = 20
+config.window_background_opacity = 0.85
+config.macos_window_background_blur = 30
 
 -- フォント
 config.font = wezterm.font_with_fallback({
@@ -27,12 +31,12 @@ config.window_frame = {
 	font_size = 11.0,
 }
 
--- 最初からフルスクリーンで起動
-local mux = wezterm.mux
-wezterm.on("gui-startup", function(cmd)
-	local tab, pane, window = mux.spawn_window(cmd or {})
-	window:gui_window():toggle_fullscreen()
-end)
+-- -- 最初からフルスクリーンで起動
+-- local mux = wezterm.mux
+-- wezterm.on("gui-startup", function(cmd)
+-- 	local tab, pane, window = mux.spawn_window(cmd or {})
+-- 	window:gui_window():toggle_fullscreen()
+-- end)
 
 -- デフォルトのkeybindを無効化
 config.disable_default_key_bindings = true
@@ -48,6 +52,9 @@ config.send_composed_key_when_left_alt_is_pressed = true
 
 -- status
 config.status_update_interval = 500
+
+-- -- window decorations
+-- config.window_decorations = "RESIZE"
 
 -- mouse binds
 config.mouse_bindings = require("mousebinds").mouse_bindings
