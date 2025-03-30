@@ -4,7 +4,7 @@ a collection of zsh scripts which should be registered .zshrc
 
 ## Usage
 
-write script load multiple zsh script to .zshrc
+write script source multiple zsh script to .zshrc
 ```sh
-cat install.txt >> ~/.zshrc
+cat install.sh >> ~/.zshrc
 ```
