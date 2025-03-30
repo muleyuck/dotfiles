@@ -1,20 +1,18 @@
-function git-switch-with-preview() {
-  local target_branch=$(
-    git branch | sed -e "s/^.* //g" |
-    fzf --info=hidden --no-multi --preview-window="top,65%" --preview "git --no-pager log -20 --color=always {}"
-  )
-  if [ -n "${target_branch}" ]; then
-    git switch $target_branch
-  fi
-  # NOTE: このwidgetはcurrent directoryも変更しないし、commandも明示的に実行しないので、
-  # 明示的にvcs_infoの取得と、promptのrefreshを行う必要がある。
-  vcs_info
-  prompt_hydrangea_render
-  zle reset-prompt
+function git-switch-branch-fzf() {
+    local log_cmd target_br
+    log_cmd="git log --oneline --decorate --graph --first-parent --color=always {1}"
+    target_br=$(fzf --layout=default --height=100% --preview="${log_cmd}" <<< $(git branch) | head -n 1 | perl -pe "s/\s//g; s/\*//g; s/remotes\/origin\///g")
+    if [ -n "$target_br" ]; then
+        git switch $target_br
+    fi
+    # NOTE: このwidgetはcurrent directoryも変更しないし、commandも明示的に実行しないので、
+    # 明示的にvcs_infoの取得と、promptのrefreshを行う必要がある。
+    vcs_info
+    # prompt_hydrangea_render
+    zle reset-prompt
 }
-zle -N git-switch-with-preview
-bindkey "^s^w" git-switch-with-preview
-
+zle -N git-switch-branch-fzf
+bindkey "^s^w" git-switch-branch-fzf
 
 function git-switch-new-branch() {
   local branch_comment prefix
@@ -33,7 +31,7 @@ bindkey "^g^n^b" git-switch-new-branch
 
 # Git add helper
 function git-add-fzf() {
-    local changed unmerged untracked unstaged_files to_be_staged_files status_flag file_path file_view_cmd fzf_preview_cmd delta_cmd
+    local changed unmerged untracked unstaged_files to_be_staged_files status_flag file_path file_view_cmd fzf_preview_cmd diff_view_cmd
 
     changed=$(git config --get-color color.status.changed red)
     unmerged=$(git config --get-color color.status.unmerged red)
@@ -43,24 +41,23 @@ function git-add-fzf() {
     if [[ $unstaged_files != '' ]] then
         file_view_cmd='cat'
         (( $+commands[bat] )) && file_view_cmd='bat --color=always'
-        delta_cmd=''
-        (( $+commands[delta] )) && delta_cmd='| delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}'
-        fzf_preview_cmd="if [[ {1} == '??' ]]; then ${file_view_cmd} {2}; else git diff --color=always {2} ${delta_cmd}; fi"
+        diff_view_cmd='git diff --color=always {2}'
+        (( $+commands[delta] )) && diff_view_cmd="${diff_view_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
+        fzf_preview_cmd="if [[ {1} == '??' ]]; then ${file_view_cmd} {2}; else ${diff_view_cmd}; fi"
         to_be_staged_files=$(fzf --ansi -m --exit-0 --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${unstaged_files})
         echo $to_be_staged_files | while read status_flag file_path
         do
             git add -v ${file_path}
         done
-        # NOTE: このwidgetはcurrent directoryも変更しないし、commandも明示的に実行しないので、
-        # 明示的にvcs_infoの取得と、promptのrefreshを行う必要がある。
-        vcs_info
-        # prompt_hydrangea_render
-        zle reset-prompt
     else
         echo "No unstaged file."
     fi
+    # NOTE: このwidgetはcurrent directoryも変更しないし、commandも明示的に実行しないので、
+    # 明示的にvcs_infoの取得と、promptのrefreshを行う必要がある。
+    vcs_info
+    # prompt_hydrangea_render
+    # zle reset-prompt
 }
-zle -N git-add-fzf
 abbr -S g-add='git-add-fzf' >>/dev/null
 
 # Git restore helper
@@ -74,26 +71,24 @@ function git-restore-fzf() {
     if [[ $staged_files != '' ]] then
         fzf_preview_cmd="git diff --color=always --cached {2}"
         (( $+commands[delta] )) && fzf_preview_cmd="${fzf_preview_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
-        to_be_unstaged_files=$(fzf --ansi -m --exit-0  --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${staged_files})
+        to_be_unstaged_files=$(fzf --ansi -m --exit-0 --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${staged_files})
         echo $to_be_unstaged_files | while read status_flag file_path
         do
             git restore --staged ${file_path}
         done
-        # NOTE: このwidgetはcurrent directoryも変更しないし、commandも明示的に実行しないので、
-        # 明示的にvcs_infoの取得と、promptのrefreshを行う必要がある。
-        vcs_info
-        # prompt_hydrangea_render
-        zle reset-prompt
     else
         echo "No staged file."
     fi
+    # NOTE: このwidgetはcurrent directoryも変更しないし、commandも明示的に実行しないので、
+    # 明示的にvcs_infoの取得と、promptのrefreshを行う必要がある。
+    vcs_info
+    # prompt_hydrangea_render
+    # zle reset-prompt
 }
-zle -N git-restore-fzf
 abbr -S g-rest='git-restore-fzf' >>/dev/null
 
 function git-discard-changes-fzf() {
-    local changed unmerged untracked unstaged_files to_be_checkout_files status_flag file_path file_view_cmd fzf_preview_cmd answer delta_cmd
-
+    local changed unmerged untracked unstaged_files to_be_checkout_files status_flag file_path file_view_cmd fzf_preview_cmd answer
 
     changed=$(git config --get-color color.status.changed red)
     unmerged=$(git config --get-color color.status.unmerged red)
@@ -102,12 +97,12 @@ function git-discard-changes-fzf() {
     unstaged_files=$( git -c color.status=always status --short -u . | grep -F -e ${changed} -e ${unmerged} -e ${untracked}) # Get unstaged file paths
     if [[ $unstaged_files != '' ]] then
         file_view_cmd='cat'
-        (( $+commands[bat] )) && file_view_cmd='bat --color=always'
-        delta_cmd=''
-        (( $+commands[delta] )) && delta_cmd='| delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}'
-        fzf_preview_cmd="if [[ {1} == '??' ]]; then ${file_view_cmd} {2}; else git diff --color=always {2} ${delta_cmd}; fi"
+        (( $+commands[bat] )) && file_view_cmd="bat --color=always"
+        diff_view_cmd='git diff --color=always {2}'
+        (( $+commands[delta] )) && diff_view_cmd="${diff_view_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
+        fzf_preview_cmd="if [[ {1} == '??' ]]; then ${file_view_cmd} {2}; else ${diff_view_cmd}; fi"
         to_be_checkout_files=$(fzf --ansi -m --exit-0 --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${unstaged_files})
-        echo "${to_be_checkout_files}"
+        echo $to_be_checkout_files
         echo -n "Really discard above files[Y/n]? "; read answer
         case $answer in
             [yY] | [yY]es | YES )
@@ -126,8 +121,12 @@ function git-discard-changes-fzf() {
     else
         echo "No unstaged file."
     fi
+    # NOTE: このwidgetはcurrent directoryも変更しないし、commandも明示的に実行しないので、
+    # 明示的にvcs_infoの取得と、promptのrefreshを行う必要がある。
+    vcs_info
+    # prompt_hydrangea_render
+    # zle reset-prompt
 }
-zle -N git-discard-changes-fzf
 abbr -S g-disc='git-discard-changes-fzf' >>/dev/null
 
 # Git commit with message helper.
@@ -138,7 +137,7 @@ function git-commit-message-fzf() {
         echo "No files to be committed."
         vcs_info
         zle reset-prompt
-        return
+        return 1
     fi
 
     # echo "fzf ${FZF_OPTION} "
@@ -146,13 +145,94 @@ function git-commit-message-fzf() {
     # (( $+commands[diff-so-fancy] )) && diff_cmd="${diff_cmd} | diff-so-fancy"
     (( $+commands[delta] )) && diff_cmd="${diff_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
     comment=$(cat ~/.config/git/git-comment.txt | fzf --preview-window="top,60%" --preview="${diff_cmd}")
-    zle redisplay
+    if [[ -z $comment ]]; then
+        vcs_info
+        zle reset-prompt
+        return 1
+    fi
     LBUFFER="git commit -m '${comment%:*}: '"
     CURSOR=$(( $#BUFFER - 1 ))
-    return
+    zle redisplay
+    return 0
 }
 zle -N git-commit-message-fzf
 bindkey "^g^m" git-commit-message-fzf
+
+function has-git-changes() {
+    local changes=$(git status -s)
+    if [[ -n $changes ]]; then
+        echo "has changes!"
+        echo $changes
+        return 0
+    else
+        return 1
+    fi
+}
+
+function git-push-origin-common() {
+    # コミット漏れがないかチェック
+    if has-git-changes; then
+        return 1
+    fi
+    # 現在のブランチのログを見て確認を促す
+    local log_cmd push_target current_branch pushed_branches delimiter push_list
+
+	current_branch=$(git branch --show-current)
+	pushed_branches=("develop" "release" "main")
+	delimiter='→'
+	push_list=()
+	for pushed_branch in "${pushed_branches[@]}"; do
+		push_list+=("${current_branch} ${delimiter} ${pushed_branch}")
+	done
+	log_cmd="git log --oneline --decorate --graph --first-parent --color=always {1}"
+    push_target=$(printf "%s\n" "${push_list[@]}" | fzf --layout=default --no-multi --preview-window="bottom,65%" --preview="${log_cmd}")
+    if [ -z $push_target ]; then
+        return 1
+    fi
+	local current_br target_br
+	IFS=${delimiter} read -r current target <<< "${push_target}"
+	current_br=$(echo $current | tr -d " ")
+	target_br=$(echo $target | tr -d " ")
+
+    # ============= Push =============
+    local force_command=''
+    if [[ $1 == "force" ]]; then
+        force_command='--force-with-lease'
+    fi
+    echo Push origin ${current_br}
+    git push origin ${current_br} ${force_command}
+    # ============= Push =============
+
+	# 同一ブランチならPullRequestの作成は必要ない
+	if [[ $current_br == $target_br ]] then
+        return 1
+    fi
+
+    # main以外のpushならPulRequest作成可能なWebページへ遷移する
+    local git_dir user_name repo_name
+    git_dir=$(git rev-parse --show-toplevel)
+    user_name=$(basename $(dirname "${git_dir}"))
+    repo_name=$(basename "${git_dir}")
+    echo "Open GitHub PullRequest Page(${repo_name})"
+    open https://github.com/${user_name}/${repo_name}/compare/${target_br}...${current_br}
+
+    # NOTE: このwidgetはcurrent directoryも変更しないし、commandも明示的に実行しないので、
+    # 明示的にvcs_infoの取得と、promptのrefreshを行う必要がある。
+    vcs_info
+    # prompt_hydrangea_render
+    # zle reset-prompt
+    return
+}
+
+function git-push-origin() {
+    git-push-origin-common
+}
+abbr -S g-push='git-push-origin' >>/dev/null
+
+function git-push-origin-force() {
+    git-push-origin-common "force"
+}
+abbr -S g-fpush='git-push-origin-force' >>/dev/null
 
 # Cd Git Repository with selection
 function git-change-repository-fzf() {
@@ -192,18 +272,6 @@ function git-create-new-repository() {
   # git add .
 }
 
-function douch() {
-  local target_dir root
-  # 引数受け取る
-  root=$#
-  echo ${root}
-  if [[ -n "${root}" ]]; then
-    return
-  fi
-  target_dir=$(ls ${root} | fzf --info=hidden --no-multi)
-  echo ${target_dir}
-}
-
 # fzf history
 function fzf-select-history() {
     BUFFER=$(history -n -r 1 | fzf --query "$LBUFFER" --reverse)
@@ -213,18 +281,6 @@ function fzf-select-history() {
 zle -N fzf-select-history
 bindkey '^r' fzf-select-history
 
-# # 自作ウィジェット
-# show_snippets() {
-#     # local snippets=$(cat ~/.config/zsh/zsh_snippet | fzf | cut -d':' -f2-)
-#     local snippets=$(linippet)
-#     LBUFFER="${LBUFFER}${snippets}"
-#     zle reset-prompt
-# }
-# # 自作ウィジェットを登録
-# zle -N show_snippets
-# # 自作ウィジェットを`Ctrl-o`で呼び出す
-# bindkey '^o' show_snippets
-
 # git stash selectable list
 function gsts() {
   local fzf_preview_cmd stash
@@ -233,4 +289,27 @@ function gsts() {
   (( $+commands[delta] )) && fzf_preview_cmd="${fzf_preview_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
   stash=$(git stash list | fzf --layout=default --height=100% --preview "${fzf_preview_cmd}")
   echo "${stash}" | grep -o 'stash@{.*}'
+}
+
+# MFA設定されているIAMユーザーの認証取得
+function aws-mfa() {
+    if [[ ! $+commands[jq]  ]];then
+        echo "command not found: jq"
+        return 1
+    fi
+    local mfa_device_name mfa_code output
+    mfa_device_name=$(aws iam list-mfa-devices | jq -r '.MFADevices[].SerialNumber')
+
+    # Code
+    echo "MFA Code?"
+    vared mfa_code
+
+    ## MFAコードを取得してXXXXXX入れる
+    output=$(aws sts get-session-token \
+    --serial-number ${mfa_device_name} \
+    --token-code ${mfa_code})
+
+    export AWS_ACCESS_KEY_ID=$(echo ${output} | jq -r .Credentials.AccessKeyId)
+    export AWS_SECRET_ACCESS_KEY=$(echo ${output} | jq -r .Credentials.SecretAccessKey)
+    export AWS_SESSION_TOKEN=$(echo ${output} | jq -r .Credentials.SessionToken)
 }
