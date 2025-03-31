@@ -45,10 +45,14 @@ function git-add-fzf() {
         (( $+commands[delta] )) && diff_view_cmd="${diff_view_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
         fzf_preview_cmd="if [[ {1} == '??' ]]; then ${file_view_cmd} {2}; else ${diff_view_cmd}; fi"
         to_be_staged_files=$(fzf --ansi -m --exit-0 --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${unstaged_files})
-        echo $to_be_staged_files | while read status_flag file_path
-        do
-            git add -v ${file_path}
-        done
+        if [[ $to_be_staged_files != '' ]]; then
+            echo $to_be_staged_files | while read status_flag file_path
+            do
+                git add -v ${file_path}
+            done
+        else
+            echo "No added file."
+        fi
     else
         echo "No unstaged file."
     fi
@@ -72,10 +76,14 @@ function git-restore-fzf() {
         fzf_preview_cmd="git diff --color=always --cached {2}"
         (( $+commands[delta] )) && fzf_preview_cmd="${fzf_preview_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
         to_be_unstaged_files=$(fzf --ansi -m --exit-0 --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${staged_files})
-        echo $to_be_unstaged_files | while read status_flag file_path
-        do
-            git restore --staged ${file_path}
-        done
+        if [[ $to_be_unstaged_files != '' ]];then
+            echo $to_be_unstaged_files | while read status_flag file_path
+            do
+                git restore --staged ${file_path}
+            done
+        else
+            echo "No restored file."
+        fi
     else
         echo "No staged file."
     fi
@@ -102,22 +110,26 @@ function git-discard-changes-fzf() {
         (( $+commands[delta] )) && diff_view_cmd="${diff_view_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
         fzf_preview_cmd="if [[ {1} == '??' ]]; then ${file_view_cmd} {2}; else ${diff_view_cmd}; fi"
         to_be_checkout_files=$(fzf --ansi -m --exit-0 --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${unstaged_files})
-        echo $to_be_checkout_files
-        echo -n "Really discard above files[Y/n]? "; read answer
-        case $answer in
-            [yY] | [yY]es | YES )
-                echo $to_be_checkout_files | while read status_flag file_path
-                do
-                    if [[ $status_flag == '??' ]]; then
-                        git clean -f ${file_path}
-                    else
-                        git checkout ${file_path}
-                    fi
-                done;;
-            * )
-                echo "No actions."
-                return 1;;
-        esac
+        if [[ $to_be_checkout_files != '' ]];then
+            echo $to_be_checkout_files
+            echo -n "Really discard above files[Y/n]? "; read answer
+            case $answer in
+                [yY] | [yY]es | YES )
+                    echo $to_be_checkout_files | while read status_flag file_path
+                    do
+                        if [[ $status_flag == '??' ]]; then
+                            git clean -f ${file_path}
+                        else
+                            git checkout ${file_path}
+                        fi
+                    done;;
+                * )
+                    echo "No actions."
+                    return 1;;
+            esac
+        else
+            echo "No discarded file."
+        fi
     else
         echo "No unstaged file."
     fi
@@ -144,7 +156,7 @@ function git-commit-message-fzf() {
     diff_cmd='git diff --cached --color=always'
     # (( $+commands[diff-so-fancy] )) && diff_cmd="${diff_cmd} | diff-so-fancy"
     (( $+commands[delta] )) && diff_cmd="${diff_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
-    comment=$(cat ~/.config/git/git-comment.txt | fzf --preview-window="top,60%" --preview="${diff_cmd}")
+    comment=$(cat ~/.config/git/git-comment.txt | fzf --preview-window="top,80%" --preview="${diff_cmd}")
     if [[ -z $comment ]]; then
         vcs_info
         zle reset-prompt
