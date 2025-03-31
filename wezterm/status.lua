@@ -69,8 +69,10 @@ local function GetHostAndCwd(elems, pane)
 	--local dot = host:find('[.]')
 
 	--AddElement(elems, HEADER_HOST, dot and host:sub(1, dot - 1) or host)
-	path = string.gsub(uri.path, os.getenv("HOME"), "~", 1)
-	AddElement(elems, HEADER_CWD, path)
+	local home_dir = os.getenv("HOME")
+	if home_dir then
+		AddElement(elems, HEADER_CWD, string.gsub(uri.path, home_dir, "~", 1))
+	end
 end
 
 local function GetDate(elems)
