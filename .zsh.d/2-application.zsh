@@ -33,3 +33,9 @@ eval "$(mise activate zsh)"
 # linippet
 export LINIPPET_TRIGGER_BIND_KEY="^o"
 eval "$(linippet init zsh)"
+
+# gnu-sed instead of sed
+export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+
+# mysql-client
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"

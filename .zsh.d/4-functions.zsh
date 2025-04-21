@@ -305,23 +305,63 @@ function gsts() {
 
 # MFA設定されているIAMユーザーの認証取得
 function aws-mfa() {
+    if [[ ! $+commands[aws]  ]];then
+        echo "command not found: aws. AWS-CLI must be installed."
+        return 1
+    fi
     if [[ ! $+commands[jq]  ]];then
         echo "command not found: jq"
         return 1
     fi
-    local mfa_device_name mfa_code output
+    local mfa_device_name mfa_code output status_code fzf_preview_cmd profile_name profile_role_arn role_session_name
     mfa_device_name=$(aws iam list-mfa-devices | jq -r '.MFADevices[].SerialNumber')
 
-    # Code
-    echo "MFA Code?"
+    # MFA Code
+    echo "MFA Code?: "
     vared mfa_code
+
+    if [[ -z $mfa_device_name ]]; then
+        echo "MFA Code is empty."
+        return 1
+    fi
 
     ## MFAコードを取得してXXXXXX入れる
     output=$(aws sts get-session-token \
     --serial-number ${mfa_device_name} \
     --token-code ${mfa_code})
+    status_code=$?
+
+    if [[ $status_code != "0" ]];then
+        echo $output
+        return $status_code
+    fi
 
     export AWS_ACCESS_KEY_ID=$(echo ${output} | jq -r .Credentials.AccessKeyId)
     export AWS_SECRET_ACCESS_KEY=$(echo ${output} | jq -r .Credentials.SecretAccessKey)
     export AWS_SESSION_TOKEN=$(echo ${output} | jq -r .Credentials.SessionToken)
+
+    # set profile
+    fzf_preview_cmd="cat ~/.aws/config"
+    (( $+commands[bat] )) && fzf_preview_cmd="bat --color=always --style=header,grid --line-range :100 ~/.aws/config"
+    profile_name=$(aws configure list-profiles | fzf --preview-window="top,80%" --preview="${fzf_preview_cmd}")
+
+    if [[ (-z $profile_name || $profile_name == "default") ]];then
+        echo "success to set profile <default>"
+        return 0
+    fi
+
+    profile_role_arn=$(aws configure get role_arn --profile "${profile_name}")
+    role_session_name=$(echo $profile_role_arn | sed 's/.*[^a-zA-Z0-9+=,.@-]//')
+    output=$(aws sts assume-role --role-arn "${profile_role_arn}" --role-session-name AWSCLI-role-session-"${role_session_name}")
+    status_code=$?
+
+    if [[ $status_code != "0" ]];then
+        echo $output
+        return $status_code
+    fi
+    export AWS_ACCESS_KEY_ID=$(echo ${output} | jq -r .Credentials.AccessKeyId)
+    export AWS_SECRET_ACCESS_KEY=$(echo ${output} | jq -r .Credentials.SecretAccessKey)
+    export AWS_SESSION_TOKEN=$(echo ${output} | jq -r .Credentials.SessionToken)
+
+    echo "success to set profile <${profile_name}>"
 }
