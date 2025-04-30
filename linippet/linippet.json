@@ -12,7 +12,19 @@
     "snippet": "ls ${{hoge}}"
   },
   {
-    "id": "9c8737ec-b538-4a70-94aa-1dcb907a21b4",
-    "snippet": "for i in {${{start_num}}..${{end_num}}}; do echo $i; done | xargs echo"
+    "id": "86ce27e7-2f2a-41f2-8978-4f8b2e491ac0",
+    "snippet": "git br | rg 'feature/' | xargs git br -D"
+  },
+  {
+    "id": "68aa0ffc-5b44-40ac-888d-623afcaf2413",
+    "snippet": "bat ~/.aws/config"
+  },
+  {
+    "id": "8587ac70-8acd-476c-b3e5-d8d7e34ae07b",
+    "snippet": "cat out.json | jq | curl -X DELETE -H 'Content-type: application/json' 'http://localhost:8080/api/search_table_setting' -d @- | jq"
+  },
+  {
+    "id": "71591767-68ac-4e6a-8c5a-5c0f49169fc1",
+    "snippet": "for i in {${{start_num}}..${{end_num}}}; do echo $i; done | jq > out.json"
   }
 ]
