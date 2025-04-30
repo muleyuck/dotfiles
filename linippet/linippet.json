@@ -1,0 +1,18 @@
+[
+  {
+    "id": "6b0af0e2-a08e-48c3-8b46-07fd98720292",
+    "snippet": "nvim ~/.zshrc"
+  },
+  {
+    "id": "71ad36d7-a39f-4aed-9bf2-820ec60c5088",
+    "snippet": "ls ~/.linippet"
+  },
+  {
+    "id": "d873c028-a364-4261-86cb-d4e6f3266d9d",
+    "snippet": "ls ${{hoge}}"
+  },
+  {
+    "id": "9c8737ec-b538-4a70-94aa-1dcb907a21b4",
+    "snippet": "for i in {${{start_num}}..${{end_num}}}; do echo $i; done | xargs echo"
+  }
+]

@@ -31,6 +31,7 @@ eval "$(zoxide init zsh --hook prompt)"
 eval "$(mise activate zsh)"
 
 # linippet
+export LINIPPET_DATA="$HOME/.config/linippet"
 export LINIPPET_TRIGGER_BIND_KEY="^o"
 eval "$(linippet init zsh)"
 
