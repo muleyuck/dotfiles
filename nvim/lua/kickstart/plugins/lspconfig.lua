@@ -181,18 +181,34 @@ return {
           -- filetypes = { 'go' },
         },
         pyright = {
+          cmd = { 'pyright-langserver', '--stdio' },
+          filetypes = { 'python' },
           capabilities = capabilities,
+          root_dir = function(fname)
+            local root_files = {
+              'setup.py',
+              'setup.cfg',
+              'requirements.txt',
+              'Pipfile',
+              'pyproject.toml',
+              'pyrightconfig.json',
+            }
+            return require('lspconfig').util.root_pattern(unpack(root_files))(fname)
+          end,
           settings = {
             pyright = {
               -- Using Ruff's import organizer
               disableOrganizeImports = true,
             },
             python = {
-              -- venvPath = '.',
+              venvPath = '.',
+              venv = '.venv',
               pythonPath = './.venv/bin/python',
               analysis = {
                 -- extraPaths = { '.' },
                 -- autoImportCompletions = true,
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = false,
                 typeCheckingMode = 'off',
                 ignore = { '*' },
               },
