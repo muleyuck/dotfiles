@@ -7,7 +7,6 @@ return {
     },
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
-      model = 'claude-3.7-sonnet',
       debug = true, -- Enable debugging
       -- See Configuration section for options
     },
@@ -15,6 +14,7 @@ return {
     config = function()
       local chatSelect = require 'CopilotChat.select'
       require('CopilotChat').setup {
+        model = 'claude-3.7-sonnet',
         show_help = true,
         prompts = {
           Explain = {
