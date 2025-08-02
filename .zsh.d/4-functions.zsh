@@ -266,10 +266,10 @@ abbr -S g-repo='git-change-repository-fzf' >>/dev/null
 # Create New Git Folder on ghq
 function git-create-new-repository() {
   local root=$(ghq root)
-  local user=$(git config --get github.user)
+  local user=$(git config --get user.name)
   if [ -z "$user" ]; then
     echo "you need to set github.user."
-    echo "git config --global github.user YOUR_GITHUB_USER_NAME"
+    echo "git config --global user.name YOUR_GITHUB_USER_NAME"
     return 1
   fi
   local name=$1

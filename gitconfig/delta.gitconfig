@@ -1,0 +1,13 @@
+[interactive]
+  diffFilter = delta --color-only
+[delta]
+  features = mantis-shrimp
+[merge]
+  conflictstyle = diff3
+[diff]
+  colorMoved = default
+[pager]
+  diff = delta
+  log = delta
+  reflog = delta
+  show = delta

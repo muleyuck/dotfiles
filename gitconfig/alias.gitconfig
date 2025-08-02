@@ -1,0 +1,13 @@
+[alias]
+  ch = checkout
+  sw = switch
+  swc = switch -c
+  br = branch
+  bra = branch -a
+  st = status -s
+  see = !open https://github.$(git config remote.origin.url | cut -f2 -d. | tr ':' /)
+  la = log --oneline --decorate --graph --branches --tags --remotes --all
+  ada = add -A
+  comm = commit -m
+  rea = restore --staged .
+  alias = !git config --get-regexp alias |  sed 's/^alias.//g' | sed 's/ / = /1'
