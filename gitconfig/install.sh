@@ -1,3 +1,9 @@
+# ======================================================
+#
+# Source multiple .gitconfig under .config/gitconfig
+# - add *.gitconfig path to .gitconfig [include]
+#
+# ======================================================
 includes=$(git config --global --get-all include.path)
 scan_path=$(echo $(cd $(dirname ${0}) && pwd))
 
