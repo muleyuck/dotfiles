@@ -204,6 +204,7 @@ return {
                 -- autoImportCompletions = true,
                 autoSearchPaths = true,
                 useLibraryCodeForTypes = false,
+                diagnosticMode = 'workspace',
                 typeCheckingMode = 'off',
                 ignore = { '*' },
               },
