@@ -187,24 +187,31 @@ function git-push-origin-common() {
         return 1
     fi
     # 現在のブランチのログを見て確認を促す
-    local log_cmd push_target current_branch pushed_branches delimiter push_list
+    local log_cmd push_target current_branch pushed_branches is_duplicate_branch delimiter push_list
 
-	current_branch=$(git branch --show-current)
-	pushed_branches=("develop" "release" "main")
-	delimiter='→'
-	push_list=()
-	for pushed_branch in "${pushed_branches[@]}"; do
-		push_list+=("${current_branch} ${delimiter} ${pushed_branch}")
-	done
-	log_cmd="git log --oneline --decorate --graph --first-parent --color=always {1}"
+    current_branch=$(git branch --show-current)
+    pushed_branches=("develop" "release" "main")
+    is_duplicate_branch=$(echo ${pushed_branches[@]} | xargs -n 1 | grep -E "^${current_branch}$")
+    if [[ -z $is_duplicate_branch ]]; then
+        pushed_branches+=(${current_branch})
+    fi
+
+    delimiter='→'
+    push_list=()
+    for pushed_branch in "${pushed_branches[@]}"; do
+        push_list+=("${current_branch} ${delimiter} ${pushed_branch}")
+    done
+
+    log_cmd="git log --oneline --decorate --graph --first-parent --color=always {1}"
     push_target=$(printf "%s\n" "${push_list[@]}" | fzf --layout=default --no-multi --preview-window="bottom,65%" --preview="${log_cmd}")
     if [ -z $push_target ]; then
         return 1
     fi
-	local current_br target_br
-	IFS=${delimiter} read -r current target <<< "${push_target}"
-	current_br=$(echo $current | tr -d " ")
-	target_br=$(echo $target | tr -d " ")
+
+    local current_br target_br
+    IFS=${delimiter} read -r current target <<< "${push_target}"
+    current_br=$(echo $current | tr -d " ")
+    target_br=$(echo $target | tr -d " ")
 
     # ============= Push =============
     local force_command=''
@@ -215,8 +222,8 @@ function git-push-origin-common() {
     git push origin ${current_br} ${force_command}
     # ============= Push =============
 
-	# 同一ブランチならPullRequestの作成は必要ない
-	if [[ $current_br == $target_br ]] then
+    # 同一ブランチならPullRequestの作成は必要ない
+    if [[ $current_br == $target_br ]] then
         return 1
     fi
 
