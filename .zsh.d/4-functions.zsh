@@ -35,7 +35,7 @@ function git-diff-by-log-fzf() {
     (( $+commands[delta] )) && fzf_preview_cmd="${fzf_preview_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
     # log_cmd="git log --oneline --decorate --graph --first-parent --color=always {1}"
     commit_logs=$(git log --oneline --decorate --graph --branches --tags --remotes --all)
-    selected_log=$(fzf --ansi --exit-0 --reverse --preview-window="top,65%" --preview="${fzf_preview_cmd}" <<< ${commit_logs})
+    selected_log=$(fzf --ansi --exit-0 --reverse --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${commit_logs})
 
     commit_id=$(awk '{print $2}' <<< $selected_log)
     if [[ -z $commit_id ]]; then
