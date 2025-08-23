@@ -29,6 +29,22 @@ function git-switch-new-branch() {
 zle -N git-switch-new-branch
 bindkey "^g^n^b" git-switch-new-branch
 
+function git-diff-by-log-fzf() {
+    local fzf_preview_cmd commit_logs selected_log commit_id
+    fzf_preview_cmd="git show --format= --color=always {2}"
+    (( $+commands[delta] )) && fzf_preview_cmd="${fzf_preview_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
+    # log_cmd="git log --oneline --decorate --graph --first-parent --color=always {1}"
+    commit_logs=$(git log --oneline --decorate --graph --branches --tags --remotes --all)
+    selected_log=$(fzf --ansi --exit-0 --reverse --preview-window="top,65%" --preview="${fzf_preview_cmd}" <<< ${commit_logs})
+
+    commit_id=$(awk '{print $2}' <<< $selected_log)
+    if [[ -z $commit_id ]]; then
+        return 1
+    fi
+    git show --color=always ${commit_id}
+}
+abbr -S g-diff='git-diff-by-log-fzf' >>/dev/null
+
 # Git add helper
 function git-add-fzf() {
     local changed unmerged untracked unstaged_files to_be_staged_files status_flag file_path file_view_cmd fzf_preview_cmd diff_view_cmd
