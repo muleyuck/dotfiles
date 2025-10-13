@@ -85,11 +85,13 @@ vim.keymap.set('n', '<C-e>', '$')
 
 vim.keymap.set('n', 's', '<CMD>w<CR>')
 vim.keymap.set({ 'n', 'v' }, 'x', '"_x')
+vim.keymap.set('x', 'p', '"_dP')
 
 vim.keymap.set('n', 'q', '<nop>')
+vim.keymap.set({ 'n', 'v', 'x' }, 'c', '<nop>')
 vim.keymap.set('n', '<C-i>', '<nop>')
 vim.keymap.set('n', '<C-o>', '<nop>')
 vim.keymap.set('i', '<C-r>', '<nop>')
 -- Copilot
-vim.keymap.set({'n','v'}, '<leader>cc', '<CMD>CopilotChat<CR>', { desc = 'Open Copilot Chat' })
-vim.keymap.set({'n','v'}, '<leader>ch', '<CMD>CopilotChatPrompt<CR>', { desc = 'Select Copilot Chat Prompt' })
+vim.keymap.set({ 'n', 'v' }, '<leader>cc', '<CMD>CopilotChat<CR>', { desc = 'Open Copilot Chat' })
+vim.keymap.set({ 'n', 'v' }, '<leader>ch', '<CMD>CopilotChatPrompt<CR>', { desc = 'Select Copilot Chat Prompt' })
