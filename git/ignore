@@ -28,3 +28,5 @@ Temporary Items
 
 .envrc
 mise.local.toml
+
+**/.claude/settings.local.json
