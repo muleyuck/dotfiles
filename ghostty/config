@@ -1,0 +1,32 @@
+theme = nordfox
+
+background-opacity = 0.85
+background-blur-radius = 30
+
+# font-size = 13
+font-feature = -calt
+font-feature = -dlig
+
+macos-titlebar-style = tabs
+macos-window-shadow = false
+
+maximize = true
+
+window-padding-x = 12
+window-padding-y = 12
+window-padding-balance =true
+window-inherit-working-directory = true
+
+cursor-opacity = 0.7
+cursor-style = block
+cursor-style-blink = false
+
+unfocused-split-opacity = 0.7
+shell-integration-features = no-cursor
+
+keybind = ctrl+shift+h=goto_split:left
+keybind = ctrl+shift+j=goto_split:bottom
+keybind = ctrl+shift+k=goto_split:top
+keybind = ctrl+shift+l=goto_split:right
+keybind = ctrl+shift+[=previous_tab
+keybind = ctrl+shift+]=next_tab
