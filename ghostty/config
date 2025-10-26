@@ -4,6 +4,7 @@ background-opacity = 0.85
 background-blur-radius = 30
 
 # font-size = 13
+font-family = HackGen Console NF
 font-feature = -calt
 font-feature = -dlig
 
@@ -12,8 +13,8 @@ macos-window-shadow = false
 
 maximize = true
 
-window-padding-x = 12
-window-padding-y = 12
+window-padding-x = 4
+window-padding-y = 4
 window-padding-balance =true
 window-inherit-working-directory = true
 
@@ -30,3 +31,4 @@ keybind = ctrl+shift+k=goto_split:top
 keybind = ctrl+shift+l=goto_split:right
 keybind = ctrl+shift+[=previous_tab
 keybind = ctrl+shift+]=next_tab
+keybind = ctrl+m=text:\r
