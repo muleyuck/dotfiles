@@ -1,3 +1,7 @@
+function dtouch() {
+    mkdir -p "$(dirname "$1")" && touch "$1"
+}
+
 function git-switch-branch-fzf() {
     local log_cmd target_br
     log_cmd="git log --oneline --decorate --graph --first-parent --color=always {1}"
