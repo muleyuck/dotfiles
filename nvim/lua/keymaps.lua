@@ -62,7 +62,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.keymap.set('n', '<Tab>', '<CMD>bnext<CR>')
 vim.keymap.set('n', '<S-Tab>', '<CMD>bprev<CR>')
 vim.keymap.set('n', '<leader>be', '<CMD>:bufdo edit<CR>')
-
+vim.keymap.set('n', '<leader>by', "<CMD>let @+ = expand('%')<CR>", { desc = 'Yank current Buffer name' })
+-- pane operation
+vim.keymap.set('n', '<leader>v', '<CMD>:vsp<CR>', { desc = 'Vertical Split Pane' })
 -- Tab operation
 vim.keymap.set('n', '<C-S-h>', '<CMD>:tabprev<CR>')
 vim.keymap.set('n', '<C-S-l>', '<CMD>:tabnext<CR>')
@@ -87,6 +89,7 @@ vim.keymap.set('n', 's', '<CMD>w<CR>')
 vim.keymap.set({ 'n', 'v' }, 'x', '"_x')
 vim.keymap.set('x', 'p', '"_dP')
 
+-- no operation
 vim.keymap.set('n', 'q', '<nop>')
 vim.keymap.set({ 'n', 'v', 'x' }, 'c', '<nop>')
 vim.keymap.set('n', '<C-i>', '<nop>')

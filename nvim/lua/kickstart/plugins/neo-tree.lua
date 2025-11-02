@@ -20,6 +20,7 @@ return {
         mappings = {
           ['<C-b>'] = 'close_window',
           ['<C-v>'] = 'open_vsplit',
+          ['<bs>'] = 'noop',
         },
       },
       filtered_items = {
