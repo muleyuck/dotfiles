@@ -192,13 +192,20 @@ bindkey "^g^m" git-commit-message-fzf
 
 function has-git-changes() {
     local changes=$(git status -s)
-    if [[ -n $changes ]]; then
-        echo "has changes!"
-        echo $changes
-        return 0
-    else
+    if [[ -z $changes ]]; then
         return 1
     fi
+
+    echo $changes
+    echo -n "Push anyway[Y/n]? "; read answer
+    case $answer in
+        [yY] | [yY]es | YES )
+            echo "Push this."
+            return 1;;
+        * )
+            echo "No push."
+            return 0;;
+    esac
 }
 
 function git-push-origin-common() {
