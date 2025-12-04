@@ -108,3 +108,15 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
     })
   end,
 })
+
+-- diagnostic
+vim.diagnostic.config {
+  -- 複数のソースがある場合のみ表示
+  virtual_text = {
+    source = 'if_many',
+  },
+  float = {
+    -- フロートウィンドウでは常にソースを表示
+    source = true,
+  },
+}
