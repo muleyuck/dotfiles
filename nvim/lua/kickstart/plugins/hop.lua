@@ -6,10 +6,10 @@ return {
     multi_windows = true,
   },
   keys = {
-    { '<leader>hw', '<cmd>HopWord<CR>', mode = 'n', desc = 'Hop Word' },
-    { '<leader>hl', '<cmd>HopLine<CR>', mode = 'n', desc = 'Hop Line' },
-    { '<leader>hc', '<cmp>HopChar1<CR>', mode = 'n', desc = 'Hop Char' },
-    { '<leader>hp', '<cmd>HopPattern<CR>', mode = 'n', desc = 'Hop Pattern' },
+    { '<leader><leader>w', '<cmd>HopWord<CR>', mode = 'n', desc = 'Hop Word' },
+    { '<leader><leader>l', '<cmd>HopLine<CR>', mode = 'n', desc = 'Hop Line' },
+    { '<leader><leader>c', '<cmp>HopChar1<CR>', mode = 'n', desc = 'Hop Char' },
+    { '<leader><leader>p', '<cmd>HopPattern<CR>', mode = 'n', desc = 'Hop Pattern' },
     { 'm', '<cmd>HopChar1CurrentLineAC<CR>', mode = { 'n', 'v', 'o' }, desc = 'Hop Char in Line (After Cursor)' },
     { 'M', '<cmd>HopChar1CurrentLineBC<CR>', mode = { 'n', 'v', 'o' }, desc = 'Hop Char in Line (Before Cursor)' },
     -- {
