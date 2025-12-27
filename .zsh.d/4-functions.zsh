@@ -247,6 +247,9 @@ function git-push-origin-common() {
     fi
     echo Push origin ${current_br}
     git push origin ${current_br} ${force_command}
+    if [[ $? -ne 0 ]]; then
+        return 1
+    fi
     # ============= Push =============
 
     # 同一ブランチならPullRequestの作成は必要ない
