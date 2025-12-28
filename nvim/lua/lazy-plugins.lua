@@ -71,8 +71,6 @@ require('lazy').setup({
 
   require 'kickstart.plugins.diffview',
 
-  require 'kickstart.plugins.toggleterm',
-
   require 'kickstart.plugins.nightfox',
 
   require 'kickstart.plugins.nvim-scrollbar',
