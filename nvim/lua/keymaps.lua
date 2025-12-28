@@ -87,9 +87,11 @@ vim.keymap.set('i', '<C-S-b>', '<S-Left>')
 vim.keymap.set('n', '<C-a>', '^')
 vim.keymap.set('n', '<C-e>', '$')
 
-vim.keymap.set('n', 's', '<CMD>w<CR>')
+vim.keymap.set('n', 's', '<CMD>w<CR>', { desc = '[s]ave' })
 vim.keymap.set({ 'n', 'v' }, 'x', '"_x')
 vim.keymap.set('x', 'p', '"_dP')
+vim.keymap.set('x', '<', '<gv', { noremap = true, silent = true, desc = 'indent shift left continuously' })
+vim.keymap.set('x', '>', '>gv', { noremap = true, silent = true, desc = 'indent shift right continuously' })
 
 -- terminal
 vim.keymap.set('t', '<C-j><C-j>', '<C-\\><C-n>')
