@@ -47,7 +47,7 @@ function git-diff-by-log-fzf() {
     fi
     git show --color=always ${commit_id}
 }
-abbr -S g-diff='git-diff-by-log-fzf' >>/dev/null
+abbr -S g-log='git-diff-by-log-fzf' >>/dev/null
 
 # Git add helper
 function git-add-fzf() {
@@ -281,7 +281,7 @@ abbr -S g-push='git-push-origin' >>/dev/null
 function git-push-origin-force() {
     git-push-origin-common "force"
 }
-abbr -S g-fpush='git-push-origin-force' >>/dev/null
+abbr -S g-push-f='git-push-origin-force' >>/dev/null
 
 # Cd Git Repository with selection
 function git-change-repository-fzf() {
