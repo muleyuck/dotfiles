@@ -40,3 +40,6 @@ export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
 
 # mysql-client
 export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+
+# fzf
+export FZF_DEFAULT_OPTS="--bind 'ctrl-j:preview-down,ctrl-k:preview-up,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down'"
