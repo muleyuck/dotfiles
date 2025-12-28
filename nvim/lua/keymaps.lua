@@ -59,17 +59,19 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- ===================== Personal Mapping =====================
 
 -- Buffer operation
-vim.keymap.set('n', '<Tab>', '<CMD>bnext<CR>')
-vim.keymap.set('n', '<S-Tab>', '<CMD>bprev<CR>')
 vim.keymap.set('n', '<leader>be', '<CMD>:bufdo edit<CR>')
 vim.keymap.set('n', '<leader>by', "<CMD>let @+ = expand('%')<CR>", { desc = 'Yank current Buffer name' })
 -- pane operation
 vim.keymap.set('n', '<leader>v', '<CMD>:vsp<CR>', { desc = 'Vertical Split Pane' })
 -- Tab operation
+vim.keymap.set('n', '<C-t>', function()
+  vim.cmd 'tabnew'
+  vim.cmd 'terminal'
+  vim.cmd 'startinsert'
+end, { noremap = true, silent = true, desc = 'start terminal tab on insert mode' })
 vim.keymap.set('n', '<C-S-h>', '<CMD>:tabprev<CR>')
 vim.keymap.set('n', '<C-S-l>', '<CMD>:tabnext<CR>')
--- vim.keymap.set('n', '<S-t>', '<CMD>:tabnew<CR>')
-vim.keymap.set('n', '<S-w>', '<CMD>:tabclose<CR>')
+vim.keymap.set('n', '<C-w>', '<CMD>:tabclose<CR>')
 
 -- emacs keybind when insert mode
 vim.keymap.set('i', '<C-d>', '<Del>')
@@ -89,12 +91,15 @@ vim.keymap.set('n', 's', '<CMD>w<CR>')
 vim.keymap.set({ 'n', 'v' }, 'x', '"_x')
 vim.keymap.set('x', 'p', '"_dP')
 
+-- terminal
+vim.keymap.set('t', '<C-j><C-j>', '<C-\\><C-n>')
+
 -- no operation
 vim.keymap.set('n', 'q', '<nop>')
 vim.keymap.set({ 'n', 'v', 'x' }, 'c', '<nop>')
 vim.keymap.set('n', '<C-i>', '<nop>')
 vim.keymap.set('n', '<C-o>', '<nop>')
 vim.keymap.set('i', '<C-r>', '<nop>')
--- Copilot
 vim.keymap.set({ 'n', 'v' }, '<leader>cc', '<CMD>CopilotChat<CR>', { desc = 'Open Copilot Chat' })
 vim.keymap.set({ 'n', 'v' }, '<leader>ch', '<CMD>CopilotChatPrompt<CR>', { desc = 'Select Copilot Chat Prompt' })
+vim.keymap.set('n', 't', '<nop>')
