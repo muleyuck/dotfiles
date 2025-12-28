@@ -49,40 +49,68 @@ function git-diff-by-log-fzf() {
 }
 abbr -S g-log='git-diff-by-log-fzf' >>/dev/null
 
-# Git add helper
-function git-add-fzf() {
+
+function git-add-fzf-common() {
     local changed unmerged untracked unstaged_files to_be_staged_files status_flag file_path file_view_cmd fzf_preview_cmd diff_view_cmd
 
     changed=$(git config --get-color color.status.changed red)
     unmerged=$(git config --get-color color.status.unmerged red)
     untracked=$(git config --get-color color.status.untracked red)
 
-    unstaged_files=$( git -c color.status=always status --short -u . | grep -F -e ${changed} -e ${unmerged} -e ${untracked}) # Get unstaged file paths
-    if [[ $unstaged_files != '' ]] then
-        file_view_cmd='cat'
-        (( $+commands[bat] )) && file_view_cmd='bat --color=always'
-        diff_view_cmd='git diff --color=always {2}'
-        (( $+commands[delta] )) && diff_view_cmd="${diff_view_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
-        fzf_preview_cmd="if [[ {1} == '??' ]]; then ${file_view_cmd} {2}; else ${diff_view_cmd}; fi"
-        to_be_staged_files=$(fzf --ansi -m --exit-0 --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${unstaged_files})
-        if [[ $to_be_staged_files != '' ]]; then
-            echo $to_be_staged_files | while read status_flag file_path
-            do
-                git add -v ${file_path}
-            done
-        else
-            echo "No added file."
-        fi
-    else
+    unstaged_files=$(git -c color.status=always status --short --untracked-files . | grep -F -e ${changed} -e ${unmerged} -e ${untracked}) # Get unstaged file paths
+    if [[ -z $unstaged_files ]] then
         echo "No unstaged file."
+        vcs_info
+        return 1
     fi
+
+    file_view_cmd='cat'
+    (( $+commands[bat] )) && file_view_cmd='bat --color=always'
+    diff_view_cmd='git diff --color=always {2}'
+    (( $+commands[delta] )) && diff_view_cmd="${diff_view_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
+    fzf_preview_cmd="if [[ {1} == '??' ]]; then ${file_view_cmd} {2}; else ${diff_view_cmd}; fi"
+
+    to_be_staged_files=$(fzf --ansi -m --exit-0 --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${unstaged_files})
+    if [[ -z $to_be_staged_files ]]; then
+        echo "No selected file."
+        vcs_info
+        return 1
+    fi
+
+    # ============= Add =============
+    local hunk_command=''
+    if [[ $1 == "hunk" ]]; then
+        hunk_command='--patch'
+    fi
+    echo $to_be_staged_files | while read status_flag file_path
+    do
+        if [[ $status_flag == '??' ]]; then
+            git add --verbose ${file_path}
+            continue
+        fi
+        git add --verbose ${hunk_command} "${file_path}" < /dev/tty
+    done
+    # ============= Add =============
+
     # NOTE: このwidgetはcurrent directoryも変更しないし、commandも明示的に実行しないので、
     # 明示的にvcs_infoの取得と、promptのrefreshを行う必要がある。
     vcs_info
     # prompt_hydrangea_render
     # zle reset-prompt
+    return
 }
-abbr -S g-add='git-add-fzf' >>/dev/null
+
+# Git add helper
+function git-add-fzf-origin() {
+    git-add-fzf-common
+}
+abbr -S g-add='git-add-fzf-origin' >>/dev/null
+
+# Git add helper with hunk selection
+function git-add-fzf-hunk() {
+    git-add-fzf-common "hunk"
+}
+abbr -S g-add-h='git-add-fzf-hunk' >>/dev/null
 
 # Git restore helper
 function git-restore-fzf() {
