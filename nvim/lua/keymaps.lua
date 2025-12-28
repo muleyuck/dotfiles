@@ -93,9 +93,6 @@ vim.keymap.set('x', 'p', '"_dP')
 vim.keymap.set('x', '<', '<gv', { noremap = true, silent = true, desc = 'indent shift left continuously' })
 vim.keymap.set('x', '>', '>gv', { noremap = true, silent = true, desc = 'indent shift right continuously' })
 
--- terminal
-vim.keymap.set('t', '<C-j><C-j>', '<C-\\><C-n>')
-
 -- no operation
 vim.keymap.set('n', 'q', '<nop>')
 vim.keymap.set({ 'n', 'v', 'x' }, 'c', '<nop>')
