@@ -10,7 +10,6 @@ font-feature = -dlig
 
 macos-titlebar-style = tabs
 macos-window-shadow = false
-macos-option-as-alt = true
 
 maximize = true
 
