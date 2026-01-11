@@ -95,7 +95,7 @@ vim.keymap.set('x', '>', '>gv', { noremap = true, silent = true, desc = 'indent 
 
 -- no operation
 vim.keymap.set('n', 'q', '<nop>')
-vim.keymap.set({ 'n', 'v', 'x' }, 'c', '<nop>')
+vim.keymap.set('n', 'c', '<nop>')
 vim.keymap.set('n', '<C-i>', '<nop>')
 vim.keymap.set('n', '<C-o>', '<nop>')
 vim.keymap.set('i', '<C-r>', '<nop>')
