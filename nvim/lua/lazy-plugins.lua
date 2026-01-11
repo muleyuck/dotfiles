@@ -69,8 +69,6 @@ require('lazy').setup({
 
   require 'kickstart.plugins.close-buffers',
 
-  require 'kickstart.plugins.diffview',
-
   require 'kickstart.plugins.nightfox',
 
   require 'kickstart.plugins.nvim-scrollbar',
@@ -80,6 +78,8 @@ require('lazy').setup({
   require 'kickstart.plugins.trim',
 
   require 'kickstart.plugins.vimade',
+
+  require 'kickstart.plugins.codediff',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
