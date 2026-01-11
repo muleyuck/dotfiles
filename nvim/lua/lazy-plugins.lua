@@ -79,6 +79,8 @@ require('lazy').setup({
 
   require 'kickstart.plugins.vimade',
 
+  require 'kickstart.plugins.aerial',
+
   require 'kickstart.plugins.codediff',
 }, {
   ui = {
