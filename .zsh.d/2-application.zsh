@@ -20,10 +20,6 @@ HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1000
 export STARSHIP_CONFIG=~/.config/startship/starship.toml
 eval "$(starship init zsh)"
 
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/takuto.otsuka/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-
 # zoxide
 eval "$(zoxide init zsh --hook prompt)"
 
