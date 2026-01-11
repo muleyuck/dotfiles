@@ -34,18 +34,24 @@ zle -N git-switch-new-branch
 bindkey "^g^n^b" git-switch-new-branch
 
 function git-diff-by-log-fzf() {
-    local fzf_preview_cmd commit_logs selected_log commit_id
+    local fzf_preview_cmd commit_log_cmd commit_logs selected_log commit_id
     fzf_preview_cmd="git show --format= --color=always {2}"
+    commit_log_cmd="git log --oneline --decorate --graph --branches --tags --remotes --all --color=always"
+    # If filepath is specified as the first argument
+    if [ -n "$1" ]; then
+        fzf_preview_cmd="${fzf_preview_cmd} -- $1"
+        commit_log_cmd="${commit_log_cmd} -- $1"
+    fi
     (( $+commands[delta] )) && fzf_preview_cmd="${fzf_preview_cmd} | delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}"
-    # log_cmd="git log --oneline --decorate --graph --first-parent --color=always {1}"
-    commit_logs=$(git log --oneline --decorate --graph --branches --tags --remotes --all)
-    selected_log=$(fzf --ansi --exit-0 --reverse --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${commit_logs})
+    commit_logs=$(eval $commit_log_cmd)
+    selected_log=$(fzf --ansi --exit-0 --reverse --no-input --preview-window="top,80%" --preview="${fzf_preview_cmd}" <<< ${commit_logs})
 
-    commit_id=$(awk '{print $2}' <<< $selected_log)
+    # Only commit hash and message
+    commit_id=$(sed -E 's/^[\ |\*\\/]+//' <<< $selected_log)
     if [[ -z $commit_id ]]; then
         return 1
     fi
-    git show --color=always ${commit_id}
+    echo "<commit> $commit_id"
 }
 abbr -S g-log='git-diff-by-log-fzf' >>/dev/null
 
