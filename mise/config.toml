@@ -1,4 +1,5 @@
 [tools]
+"cargo:cargo-dist" = "latest"
 go = "1.25.1"
 "go:github.com/air-verse/air" = "latest"
 "go:github.com/spf13/cobra-cli" = "latest"
@@ -6,6 +7,7 @@ node = "25.1.0"
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:@github/copilot" = "latest"
 python = "3.12.7"
+rust = "1.90.0"
 
 [settings]
 experimental = true
