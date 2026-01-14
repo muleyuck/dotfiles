@@ -21,4 +21,5 @@ return {
   -- You probably also want to set a keymap to toggle aerial
   vim.keymap.set('n', '<leader>a', '<CMD>AerialToggle<CR>'),
   vim.keymap.set('n', '<ESC><ESC>', '<CMD>AerialClose<CR>'),
+  vim.keymap.set('n', '<C-c>', '<CMD>AerialClose<CR>'),
 }
