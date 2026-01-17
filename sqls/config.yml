@@ -1,0 +1,16 @@
+lowercaseKeywords: false
+connections:
+  - alias: local_sqlite
+    driver: sqlite3
+    dataSourceName: file:db.sqlite3?cache=shared&mode=ro
+  - alias: local_mysql
+    driver: mysql
+    host: localhost
+    proto: tcp
+    port: 3306
+    user: mysql_db_user
+    passwd: mysql_db_password
+    dbName: mysql_db
+    params:
+      autocommit: "true"
+      tls: skip-verify
